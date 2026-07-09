@@ -11,14 +11,6 @@ Las niñas pueden jugar a:
 - 🔦 Validar boletos en la entrada (rol de acomodadora)
 - 👩‍💼 Ver estadísticas y reiniciar el cine (rol de administradora)
 
-## 🚀 Publicar en GitHub Pages
-
-1. Crea un repositorio nuevo (por ejemplo `cinechiquis`).
-2. Sube estos tres archivos a la raíz: `index.html`, `styles.css`, `app.js` (el `README.md` es opcional).
-3. En el repositorio ve a **Settings → Pages**.
-4. En *Source* elige **Deploy from a branch**, rama `main`, carpeta `/ (root)` y guarda.
-5. En uno o dos minutos tu app quedará en `https://TU-USUARIO.github.io/cinechiquis/`.
-
 ## 🔑 Películas reales con TMDB (opcional)
 
 La app trae **incluida de fábrica una clave de TMDB** (token de lectura v4, en `app.js`), así que las películas y pósters reales funcionan desde el primer momento. Toma en cuenta que, al estar en el código de un sitio estático, esa clave queda visible para cualquiera que vea el repositorio o el sitio; es de solo lectura y gratuita, y puedes revocarla o cambiarla en tu cuenta de TMDB cuando quieras.
