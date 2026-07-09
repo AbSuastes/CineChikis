@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cinechiquis 🍿 Mi cine de juguete</title>
+  <meta name="description" content="Cinechiquis: un simulador infantil de cine para jugar a comprar boletos, elegir asientos y visitar la dulcería." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍿</text></svg>" />
+</head>
+<body>
+
+  <!-- ═══════════ ENCABEZADO CON MARQUESINA ═══════════ -->
+  <header class="marquesina">
+    <div class="focos focos-arriba" aria-hidden="true"></div>
+    <h1 class="logo" id="btn-logo" role="button" tabindex="0" title="Ir al inicio">🎬 Cinechiquis</h1>
+    <p class="lema">¡Tu cine de juguete favorito!</p>
+    <div class="focos focos-abajo" aria-hidden="true"></div>
+  </header>
+
+  <!-- ═══════════ BARRA DE ROL ═══════════ -->
+  <div class="barra-rol" id="barra-rol" hidden>
+    <span id="rol-actual">👧 Cliente</span>
+    <button class="boton mini" id="btn-cambiar-rol">Cambiar rol</button>
+  </div>
+
+  <main id="contenido">
+
+    <!-- ═══════════ 1. INICIO ═══════════ -->
+    <section class="vista activa" id="vista-inicio">
+      <h2 class="titulo-vista">¡Bienvenida a Cinechiquis! 🎉</h2>
+      <p class="subtitulo">Elige quién quieres ser hoy para empezar a jugar:</p>
+      <div class="rejilla-roles" id="rejilla-roles">
+        <button class="tarjeta-rol" data-rol="cliente"><span class="emoji-rol">👧</span><strong>Cliente</strong><small>Compra boletos y golosinas</small></button>
+        <button class="tarjeta-rol" data-rol="taquillera"><span class="emoji-rol">🎟️</span><strong>Taquillera</strong><small>Vende boletos y asigna asientos</small></button>
+        <button class="tarjeta-rol" data-rol="cafeteria"><span class="emoji-rol">🍿</span><strong>Encargada de cafetería</strong><small>Prepara palomitas y combos</small></button>
+        <button class="tarjeta-rol" data-rol="acomodadora"><span class="emoji-rol">🔦</span><strong>Acomodadora</strong><small>Revisa boletos en la entrada</small></button>
+        <button class="tarjeta-rol" data-rol="administradora"><span class="emoji-rol">👩‍💼</span><strong>Administradora</strong><small>Cuida que todo funcione</small></button>
+      </div>
+      <div class="acciones-inicio">
+        <button class="boton grande primario" data-ir="vista-cartelera">🎬 Ver cartelera</button>
+        <button class="boton grande" data-ir="vista-cafeteria">🍿 Ir a la dulcería</button>
+        <button class="boton grande" data-ir="vista-validacion">🔦 Validar boletos</button>
+      </div>
+    </section>
+
+    <!-- ═══════════ 2. CONFIGURACIÓN DE API ═══════════ -->
+    <section class="vista" id="vista-config">
+      <h2 class="titulo-vista">⚙️ Configuración mágica</h2>
+      <div class="tarjeta">
+        <p>Cinechiquis ya trae incluida una clave de <strong>TMDB</strong> (The Movie Database) para mostrar películas y pósters reales. Si prefieres usar tu propia <strong>API key (v3)</strong> o <strong>token de lectura (v4)</strong>, pégala aquí:</p>
+        <input type="password" id="campo-token" class="campo" placeholder="Pega aquí tu API key o token de TMDB (opcional)" autocomplete="off" />
+        <div class="fila-botones">
+          <button class="boton primario" id="btn-guardar-token">💾 Guardar mi clave</button>
+          <button class="boton" id="btn-probar-token">🧪 Probar conexión</button>
+          <button class="boton peligro" id="btn-borrar-token">🧸 Usar modo demo</button>
+        </div>
+        <p class="nota" id="estado-token"></p>
+        <p class="nota">🔒 Tu clave personal se guarda solamente en <em>este</em> navegador (localStorage). El <strong>modo demo</strong> apaga TMDB y usa una cartelera de juguete.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════ 3 y 4. CARTELERA ═══════════ -->
+    <section class="vista" id="vista-cartelera">
+      <h2 class="titulo-vista">🎬 Cartelera</h2>
+      <div class="buscador">
+        <input type="search" id="campo-busqueda" class="campo" placeholder="Busca una película… 🔍" />
+        <button class="boton primario" id="btn-buscar">Buscar</button>
+      </div>
+      <div class="chips" id="chips-sugeridas"></div>
+      <p class="nota" id="aviso-cartelera"></p>
+      <div class="rejilla-peliculas" id="rejilla-peliculas"></div>
+    </section>
+
+    <!-- ═══════════ 5. SELECCIÓN DE FUNCIÓN ═══════════ -->
+    <section class="vista" id="vista-funcion">
+      <h2 class="titulo-vista">🕐 Elige tu función</h2>
+      <div class="tarjeta ficha-pelicula" id="ficha-pelicula"></div>
+      <div class="rejilla-funciones" id="rejilla-funciones"></div>
+      <button class="boton" data-ir="vista-cartelera">⬅️ Volver a la cartelera</button>
+    </section>
+
+    <!-- ═══════════ 6. SELECCIÓN DE ASIENTOS ═══════════ -->
+    <section class="vista" id="vista-asientos">
+      <h2 class="titulo-vista">💺 Elige tus asientos</h2>
+      <p class="subtitulo" id="detalle-funcion"></p>
+      <div class="pantalla-cine">✨ P A N T A L L A ✨</div>
+      <div class="sala" id="mapa-asientos"></div>
+      <div class="leyenda">
+        <span><i class="cuadro libre"></i> Libre</span>
+        <span><i class="cuadro elegido"></i> Elegido</span>
+        <span><i class="cuadro ocupado"></i> Ocupado</span>
+      </div>
+      <p class="subtitulo" id="resumen-asientos">Toca los asientos que quieras 💜</p>
+      <div class="fila-botones">
+        <button class="boton" data-ir="vista-funcion">⬅️ Cambiar función</button>
+        <button class="boton grande primario" id="btn-continuar-boletos" disabled>Continuar ➡️</button>
+      </div>
+    </section>
+
+    <!-- ═══════════ 7. TIPOS DE BOLETO ═══════════ -->
+    <section class="vista" id="vista-tipos">
+      <h2 class="titulo-vista">🎟️ ¿Qué boletos quieres?</h2>
+      <p class="subtitulo">Elige un tipo de boleto para cada asiento:</p>
+      <div id="lista-tipos"></div>
+      <div class="tarjeta total-parcial" id="total-boletos"></div>
+      <div class="fila-botones">
+        <button class="boton" data-ir="vista-asientos">⬅️ Cambiar asientos</button>
+        <button class="boton grande primario" id="btn-agregar-boletos">🛒 Agregar al carrito</button>
+      </div>
+    </section>
+
+    <!-- ═══════════ 9. CAFETERÍA ═══════════ -->
+    <section class="vista" id="vista-cafeteria">
+      <h2 class="titulo-vista">🍿 Dulcería Cinechiquis</h2>
+      <p class="subtitulo">¡Todo se paga con moneditas de juguete! 🪙</p>
+      <div class="rejilla-productos" id="rejilla-productos"></div>
+      <div class="fila-botones">
+        <button class="boton grande primario" data-ir="vista-carrito">🛒 Ver mi carrito</button>
+      </div>
+    </section>
+
+    <!-- ═══════════ 10. CARRITO ═══════════ -->
+    <section class="vista" id="vista-carrito">
+      <h2 class="titulo-vista">🛒 Mi carrito</h2>
+      <div id="contenido-carrito"></div>
+      <div class="tarjeta pago" id="zona-pago" hidden>
+        <h3>💰 Pagar con moneditas</h3>
+        <label for="campo-monedas">¿Cuántas moneditas entregas? 🪙</label>
+        <input type="number" min="0" id="campo-monedas" class="campo numero" placeholder="0" />
+        <p class="nota" id="mensaje-cambio"></p>
+        <button class="boton grande primario" id="btn-pagar">✅ Confirmar compra</button>
+      </div>
+    </section>
+
+    <!-- ═══════════ 8. BOLETOS GENERADOS ═══════════ -->
+    <section class="vista" id="vista-boletos">
+      <h2 class="titulo-vista">🎉 ¡Aquí están tus boletos!</h2>
+      <div id="lista-boletos"></div>
+      <div class="fila-botones">
+        <button class="boton" data-ir="vista-cafeteria">🍿 Ir a la dulcería</button>
+        <button class="boton primario" data-ir="vista-validacion">🔦 Ir a la entrada</button>
+      </div>
+    </section>
+
+    <!-- ═══════════ 11. TICKET DE CAFETERÍA ═══════════ -->
+    <section class="vista" id="vista-ticket-cafe">
+      <h2 class="titulo-vista">🧾 Tu ticket de la dulcería</h2>
+      <div id="zona-ticket-cafe"></div>
+      <div class="fila-botones">
+        <button class="boton primario" data-ir="vista-inicio">🏠 Volver al inicio</button>
+      </div>
+    </section>
+
+    <!-- ═══════════ 12. VALIDACIÓN DE ENTRADA ═══════════ -->
+    <section class="vista" id="vista-validacion">
+      <h2 class="titulo-vista">🔦 Entrada a las salas</h2>
+      <div class="tarjeta">
+        <p>Escribe el código del boleto para revisarlo:</p>
+        <div class="buscador">
+          <input type="text" id="campo-codigo" class="campo" placeholder="Ejemplo: CHIQ-A1B2" autocomplete="off" />
+          <button class="boton primario" id="btn-validar">Revisar 🔎</button>
+        </div>
+        <div id="resultado-validacion"></div>
+      </div>
+      <h3 class="subtitulo">Boletos vendidos hoy:</h3>
+      <div id="lista-validacion"></div>
+    </section>
+
+    <!-- ═══════════ 13 + ADMIN ═══════════ -->
+    <section class="vista" id="vista-admin">
+      <h2 class="titulo-vista">👩‍💼 Oficina de la administradora</h2>
+      <div class="rejilla-stats" id="rejilla-stats"></div>
+      <div class="tarjeta">
+        <h3>⚙️ Herramientas</h3>
+        <div class="fila-botones">
+          <button class="boton" data-ir="vista-config">🔑 Configurar TMDB</button>
+          <button class="boton peligro" id="btn-reiniciar">🧹 Reiniciar todo el cine</button>
+        </div>
+        <p class="nota">Reiniciar borra boletos, asientos ocupados, pedidos y carrito (la clave de TMDB se conserva).</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════ NAVEGACIÓN INFERIOR ═══════════ -->
+  <nav class="navegacion" aria-label="Secciones del cine">
+    <button data-ir="vista-inicio"    class="nav-btn" title="Inicio"><span>🏠</span>Inicio</button>
+    <button data-ir="vista-cartelera" class="nav-btn" title="Cartelera"><span>🎬</span>Cartelera</button>
+    <button data-ir="vista-cafeteria" class="nav-btn" title="Dulcería"><span>🍿</span>Dulcería</button>
+    <button data-ir="vista-carrito"   class="nav-btn" title="Carrito"><span>🛒</span>Carrito <b class="globito" id="globito-carrito" hidden>0</b></button>
+    <button data-ir="vista-validacion" class="nav-btn" title="Entrada"><span>🔦</span>Entrada</button>
+    <button data-ir="vista-admin"     class="nav-btn" title="Oficina"><span>👩‍💼</span>Oficina</button>
+  </nav>
+
+  <div class="brindis" id="brindis" role="status" aria-live="polite"></div>
+
+  <!-- Librería de QR decorativo (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
